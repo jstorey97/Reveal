@@ -357,6 +357,10 @@ Navigation
 	display: block;
 }
 
+.img-responsive{
+	margin-top: -50px;
+}
+
 .loader { 
 	text-align: center; 
 	margin: auto; 
@@ -836,6 +840,7 @@ footer .widget h5 {
 .sub-footer {
 	border-top: 1px solid #fafafa;
 	padding: 50px 0 20px;
+
 }
 
 .sub-footer a{
@@ -1184,4 +1189,6 @@ a.btn:focus{
 	.intro-content {
 		padding:60px 0 0;
 	}
+	
+
 }
