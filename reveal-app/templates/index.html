@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Appland landing page template for app</title>
+    <title>Reveal - Match. Talk. Reveal.</title>
 	
     <!-- css -->
     <link href="../static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -35,7 +35,8 @@
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
                     <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand" href="index.html">
+
+                <a class="navbar-brand" href="{{ url_for('index') }}">
                     <img src="../static/img/logo3.png" alt="" width="150" height="40" />
                 </a>
             </div>
@@ -88,7 +89,7 @@
 						</div>
 						
 						<div class="buttons">
-							<a href="#" class="btn btn-success btn-lg wow fadeInLeft"  data-wow-duration="2s" data-wow-delay="0.2s">Sign Up Online</a>
+							<a href=" {{ url_for('register') }}" class="btn btn-success btn-lg wow fadeInLeft" data-wow-duration="2s" data-wow-delay="0.2s">Sign Up Online</a>
 							<a href="#" class="btn btn-info btn-lg wow fadeInRight" data-wow-duration="3s" data-wow-delay="0.3s">Login</a>
 						</div>
 						
