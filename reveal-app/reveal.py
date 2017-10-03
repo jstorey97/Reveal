@@ -1,12 +1,23 @@
+import os
+
 from flask import Flask
 from random import choice
 from string import ascii_letters
+
+from flask_sqlalchemy import SQLAlchemy
 from flask import render_template, request, redirect, url_for
 from wtforms import Form, StringField, PasswordField, validators
 from wtforms.fields.html5 import EmailField
+from datetime import datetime
+
+from passlib.hash import sha256_crypt
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.abspath(os.getcwd())+"\database.db"
 app.secret_key = 'BULKpowders2017'
+
+db = SQLAlchemy(app)
 
 
 @app.route('/')
@@ -14,8 +25,27 @@ def index():
     return render_template('index.html')
 
 
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    fullname = db.Column(db.String(60))
+    email = db.Column(db.String(40), unique=True)
+
+    verification_phrase = db.Column(db.String(20))
+    confirmed = db.Column(db.Boolean())
+    confirmed_at = db.Column(db.DateTime())
+
+    last_login_at = db.Column(db.DateTime())
+    current_login_at = db.Column(db.DateTime())
+
+    last_login_ip = db.Column(db.String(100))
+    current_login_ip = db.Column(db.String(100))
+
+    registered_at = db.Column(db.DateTime())
+
+
 class RegisterForm(Form):
-    name = StringField('Full Name', [validators.Length(min=1, max=50)])
+    name = StringField('Full Name', [validators.Length(min=1, max=60)])
     email = EmailField('Email address', [validators.DataRequired(), validators.Email()])
     password = PasswordField('Password', [
         validators.DataRequired(),
@@ -29,16 +59,22 @@ def register():
     form = RegisterForm(request.form)
 
     if request.method == 'POST' and form.validate():
-        name = form.name.data
+        fullname = form.name.data
         email = form.email.data
-        password = form.password.data
-        verification_num = ''.join([choice(ascii_letters) for i in range(7)])
+        password = sha256_crypt.encrypt(str(form.password.data))
+        verification_phrase = ''.join([choice(ascii_letters) for i in range(7)])
 
-        print(name, email, password, verification_num)
-        # Input them into SQL
+        # sha256_crypt.verify(user_input, their_hash)
 
+        user = User(fullname=fullname, email=email, password=password,
+                    verification_phrase=verification_phrase, registered_at=datetime.now())
 
-        redirect(url_for('index'))
+        db.session.add(user)
+        db.session.commit()
+
+        redirect(url_for('confirmation',
+                         name=name,
+                         email=email))
 
     return render_template('register.html',
                            form=form)
