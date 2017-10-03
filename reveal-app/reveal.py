@@ -62,21 +62,34 @@ def register():
         fullname = form.name.data
         email = form.email.data
         password = sha256_crypt.encrypt(str(form.password.data))
-        verification_phrase = ''.join([choice(ascii_letters) for i in range(7)])
+        verification_phrase = ''.join([choice(ascii_letters) for i in range(11)])
+        current_ip = request.remote_addr
 
         # sha256_crypt.verify(user_input, their_hash)
 
-        user = User(fullname=fullname, email=email, password=password,
-                    verification_phrase=verification_phrase, registered_at=datetime.now())
+        user = User(fullname=fullname, email=email,
+                    verification_phrase=verification_phrase, registered_at=datetime.now(),
+                    current_login_ip=current_ip)
 
         db.session.add(user)
         db.session.commit()
 
-        redirect(url_for('confirmation',
-                         name=name,
-                         email=email))
+        return redirect(url_for('confirm_email',
+                                name=fullname,
+                                email=email))
 
     return render_template('register.html',
+                           form=form)
+
+
+class Confirmation(Form):
+    code = StringField('Confirmation code', [validators.Length(min=1, max=10)])
+
+
+@app.route('/register/confirm')
+def confirm_email():
+    form = Confirmation(request.form)
+    return render_template('email_confirmation.html',
                            form=form)
 
 
