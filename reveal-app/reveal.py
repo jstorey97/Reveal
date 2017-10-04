@@ -93,5 +93,17 @@ def confirm_email():
                            form=form)
 
 
+class LoginForm(Form):
+    email = EmailField('Email address', [validators.DataRequired(), validators.Email()])
+    password = StringField('Password')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm(request.form)
+    return render_template('login.html',
+                           form=form)
+
+
 if __name__ == "__main__":
   app.run(debug=True)

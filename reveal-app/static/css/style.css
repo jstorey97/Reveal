@@ -1298,8 +1298,28 @@ a.btn:focus{
     margin-top: 30px;
 }
 
+/* Register / Forgot */
+.regforget{
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
 
+.regforget ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
 
+.regforget li{
+    float: left;
+
+   }
+
+.regforget a{
+    display: block;
+    text-align: center;
+    padding: 0 8px;;
+}
 
 /*	Making the form responsive. Remove this media query
     if you don't need the form to work on mobile devices. */
