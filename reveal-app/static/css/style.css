@@ -774,6 +774,10 @@ a.btn:focus{
     margin-top: auto;
 }
 
+.signin {
+    width: 300px;
+    background-color: #c83539;
+}
 
 /* Confirmation */
 .confirm-text{
@@ -784,25 +788,9 @@ a.btn:focus{
 .regforget{
     margin-top: 15px;
     margin-bottom: 15px;
-    text-align: center;
+    cursor: pointer;
 }
 
-.regforget ul{
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-.regforget li{
-    float: left;
-
-   }
-
-.regforget a{
-    display: block;
-    text-align: center;
-    padding: 0 8px;;
-}
 
 .flashes{
     list-style-type: none;

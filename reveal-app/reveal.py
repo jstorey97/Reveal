@@ -118,10 +118,6 @@ def login():
         else:
             flash("Incorrect email or the address is not registered")
 
-
-        # Need to load users info from database here
-
-
     return render_template('login.html',
                            form=form)
 

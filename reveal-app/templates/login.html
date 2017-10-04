@@ -64,23 +64,33 @@
 
             <div class="form-row">
                 {{ render_field(form.email, class_="form-control") }}
+
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <ul class='flashes'>
+                            {% for message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
             </div>
+
+
+
 
             <div class="form-row">
                 {{ render_field(form.password, class_="form-control") }}
             </div>
 
             <div class="form-row">
-                <button type="submit">Submit</button>
+                <button class="signin">Sign In</button>
             </div>
 
             <div class="regforget">
-                <ul>
-                    <li><a href="'#'">Register</a></li>
-                    <li><a>|</a></li>
-                    <li><a href="'#'">Forgotten password?</a></li>
-                </ul>
+                <a>Register</a> | <a>Forgotten your password?</a>
             </div>
+
 
         </form>
 
