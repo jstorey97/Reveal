@@ -5,7 +5,8 @@ from random import choice
 from string import ascii_letters
 
 from flask_sqlalchemy import SQLAlchemy
-from flask import render_template, request, redirect, url_for
+from flask_login import LoginManager, login_user
+from flask import render_template, request, redirect, url_for, flash
 from wtforms import Form, StringField, PasswordField, validators
 from wtforms.fields.html5 import EmailField
 from datetime import datetime
@@ -16,6 +17,10 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.abspath(os.getcwd())+"\database.db"
 app.secret_key = 'BULKpowders2017'
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'users.login'
 
 db = SQLAlchemy(app)
 
@@ -30,6 +35,7 @@ class User(db.Model):
 
     fullname = db.Column(db.String(60))
     email = db.Column(db.String(40), unique=True)
+    password = db.Column(db.String(100))
 
     verification_phrase = db.Column(db.String(20))
     confirmed = db.Column(db.Boolean())
@@ -65,9 +71,7 @@ def register():
         verification_phrase = ''.join([choice(ascii_letters) for i in range(11)])
         current_ip = request.remote_addr
 
-        # sha256_crypt.verify(user_input, their_hash)
-
-        user = User(fullname=fullname, email=email,
+        user = User(fullname=fullname, email=email, password=password,
                     verification_phrase=verification_phrase, registered_at=datetime.now(),
                     current_login_ip=current_ip)
 
@@ -95,12 +99,29 @@ def confirm_email():
 
 class LoginForm(Form):
     email = EmailField('Email address', [validators.DataRequired(), validators.Email()])
-    password = StringField('Password')
+    password = PasswordField('Password')
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+        email = form.email.data
+        password = form.email.data
+
+        user = User.query.filter_by(email=email).first()
+
+        if user is not None and sha256_crypt.verify(password, user.password):
+            login_user(user)
+
+        else:
+            flash("Incorrect email or the address is not registered")
+
+
+        # Need to load users info from database here
+
+
     return render_template('login.html',
                            form=form)
 
