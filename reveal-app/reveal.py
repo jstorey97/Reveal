@@ -5,7 +5,7 @@ from random import choice
 from string import ascii_letters
 
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_user, UserMixin, login_required
+from flask_login import LoginManager, login_user, UserMixin, login_required, logout_user
 from flask import render_template, request, redirect, url_for, flash
 
 
@@ -99,10 +99,10 @@ def login():
 
         if user is not None and sha256_crypt.verify(password, user.password):
             if not user.confirmed:
-                flash("Please confirm your email")
+                flash("Please confirm your email before logging in!")
 
             else:
-                login_user(user, remember=form.remember)
+                login_user(user, remember=True)
 
         else:
             flash("Incorrect email or the address is not registered")
@@ -115,6 +115,13 @@ def login():
 @login_required
 def dashboard():
     return render_template('dashboard.html')
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for(index))
 
 
 if __name__ == "__main__":
