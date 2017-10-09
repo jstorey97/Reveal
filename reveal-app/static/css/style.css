@@ -799,6 +799,12 @@ a.btn:focus{
     font-size: 10px;
 }
 
+
+.email-confirmation{
+    margin-top: 80px;
+    margin-bottom: 80px;
+}
+
 /*	Making the form responsive. Remove this media query
     if you don't need the form to work on mobile devices. */
 
@@ -927,6 +933,10 @@ a.btn:focus{
 		margin-bottom: 30px;
 	}
 
+	.email-confirmation{
+        margin-bottom: 20px;
+    }
+
 }
 
 @media (max-width:320px) {
@@ -943,6 +953,10 @@ a.btn:focus{
 	.regforget a{
 	    font-size: 14px;
 	}
+
+    .email-confirmation{
+        margin-bottom: 10px;
+    }
 
 
 }

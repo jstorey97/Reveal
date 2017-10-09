@@ -1,13 +1,14 @@
 import os
 
-from flask import Flask
 from random import choice
 from string import ascii_letters
 
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, UserMixin, login_required, logout_user
 from flask import render_template, request, redirect, url_for, flash
-
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 from models import RegisterForm, ConfirmationForm, LoginForm
 
@@ -15,6 +16,7 @@ from datetime import datetime
 from passlib.hash import sha256_crypt
 
 app = Flask(__name__)
+app.config.from_pyfile("email_conf.py")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.abspath(os.getcwd())+"\database.db"
 app.secret_key = 'BULKpowders2017'
@@ -22,6 +24,9 @@ app.secret_key = 'BULKpowders2017'
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+mail = Mail(app)
+s = URLSafeTimedSerializer('ThisIsASecret')
 
 db = SQLAlchemy(app)
 
@@ -72,6 +77,13 @@ def register():
         db.session.add(user)
         db.session.commit()
 
+        token = s.dumps(form.email.data)
+
+        msg = Message('Confirm email', sender='Trump4cast@gmail.com', recipients=[form.email.data])
+        link = url_for('confirmed', token=token, _external=True)
+        msg.body = f"Your confirmation link is: {link}"
+        mail.send(msg)
+
         return redirect(url_for('confirm_email',
                                 name=form.name.data,
                                 email=form.email.data))
@@ -82,9 +94,24 @@ def register():
 
 @app.route('/register/confirm',  methods=['GET', 'POST'])
 def confirm_email():
-    form = ConfirmationForm(request.form)
-    return render_template('email_confirmation.html',
-                           form=form)
+    return render_template('email_confirmation.html')
+
+
+@app.route('/register/confirmed?<token>')
+def confirmed(token):
+    try:
+        email = s.loads(token, max_age=6000)
+
+        user = User.query.filter_by(email=email).first()
+        user.confirmed = True
+        user.confirmed_at = datetime.now()
+        db.session.commit()
+
+        return render_template('email_confirmed.html')
+
+    except SignatureExpired:
+        # Have something here to deal with this later
+        pass
 
 
 @app.route('/login/', methods=['GET', 'POST'])
@@ -103,6 +130,7 @@ def login():
 
             else:
                 login_user(user, remember=True)
+                print("Logged in")
 
         else:
             flash("Incorrect email or the address is not registered")
