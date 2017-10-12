@@ -38,7 +38,6 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(40), unique=True)
     password = db.Column(db.String(100))
 
-    verification_phrase = db.Column(db.String(20))
     confirmed = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
 
@@ -69,7 +68,6 @@ def register():
         user = User(fullname=form.name.data,
                     email=form.email.data,
                     password=sha256_crypt.encrypt(str(form.password.data)),
-                    verification_phrase=''.join([choice(ascii_letters) for _ in range(11)]),
                     registered_at=datetime.now(),
                     current_login_ip=request.remote_addr,
                     confirmed=False)
@@ -143,6 +141,12 @@ def login():
 @login_required
 def dashboard():
     return render_template('dashboard.html')
+
+
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')
 
 
 @app.route('/logout')
