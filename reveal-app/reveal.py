@@ -31,9 +31,10 @@ db = SQLAlchemy(app)
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
 
-    fullname = db.Column(db.String(60))
+    first_name = db.Column(db.String(25))
+    surname = db.Column(db.String(40))
     email = db.Column(db.String(40), unique=True)
-    password = db.Column(db.String(100))
+    password = db.Column(db.String(25))
 
     confirmed = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
@@ -45,6 +46,23 @@ class User(db.Model, UserMixin):
     current_login_ip = db.Column(db.String(100))
 
     registered_at = db.Column(db.DateTime())
+
+
+class Settings(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+
+    email = db.Column(db.String(40), unique=True)
+
+    gender = db.Column(db.String(10))
+    age = db.Column(db.Integer)
+
+    instagram = db.Column(db.String(40))
+    twitter = db.Column(db.String(40))
+
+    show_me = db.Column(db.String(10))
+    max_range = db.Column(db.Integer)
+
+    settings_edited = db.Column(db.Boolean())
 
 
 @login_manager.user_loader
@@ -62,7 +80,8 @@ def register():
     form = RegisterForm(request.form)
 
     if request.method == 'POST' and form.validate():
-        user = User(fullname=form.name.data,
+        user = User(first_name=form.name.data.split()[0],
+                    surname=' '.join(form.name.data.split()[1:]),
                     email=form.email.data,
                     password=sha256_crypt.encrypt(str(form.password.data)),
                     registered_at=datetime.now(),
@@ -70,6 +89,12 @@ def register():
                     confirmed=False)
 
         db.session.add(user)
+        db.session.commit()
+
+        user_settings = Settings(email=form.email.data,
+                                 settings_edited=False)
+
+        db.session.add(user_settings)
         db.session.commit()
 
         token = s.dumps(form.email.data)
@@ -132,18 +157,38 @@ def login():
                            form=form)
 
 
-@app.route('/dashboard')
+@app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    user = current_user.get_id()
-    print(user)
-    return render_template('dashboard.html')
+    user = load_user(current_user.get_id())
+
+    fullname = f'{user.first_name} {user.surname}'
+    user_settings = Settings.query.filter_by(email=user.email).first()
+
+    if user_settings.settings_edited:
+        return render_template('dashboard.html',
+                               fullname=fullname,
+                               edited=True,
+                               )
+
+    else:
+        return render_template('dashboard.html',
+                               fullname=fullname,
+                               edited=False,
+                               )
+1
 
 
 @app.route('/profile')
 @login_required
 def profile():
     return render_template('profile.html')
+
+
+@app.route('/settings')
+@login_required
+def settings():
+    return render_template('settings.html')
 
 
 @app.route('/logout')
@@ -154,7 +199,7 @@ def logout():
 
 
 @app.errorhandler(404)
-def page_not_found(e):
+def page_not_found(error):
     return render_template('404.html'), 404
 
 
