@@ -1,11 +1,8 @@
 import os
 
-from random import choice
-from string import ascii_letters
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_user, UserMixin, login_required, logout_user
+from flask_login import LoginManager, login_user, UserMixin, login_required, logout_user, current_user
 from flask import render_template, request, redirect, url_for, flash
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
@@ -82,15 +79,13 @@ def register():
         msg.body = f"Your confirmation link is: {link}"
         mail.send(msg)
 
-        return redirect(url_for('confirm_email',
-                                name=form.name.data,
-                                email=form.email.data))
+        return redirect(url_for('confirm_email'))
 
     return render_template('register.html',
                            form=form)
 
 
-@app.route('/register/confirm',  methods=['GET', 'POST'])
+@app.route('/register/confirm/')
 def confirm_email():
     return render_template('email_confirmation.html')
 
@@ -128,7 +123,7 @@ def login():
 
             else:
                 login_user(user, remember=True)
-                redirect(url_for('dashboard'))
+                return redirect(url_for('dashboard'))
 
         else:
             flash("Incorrect email or the address is not registered")
@@ -140,6 +135,8 @@ def login():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    user = current_user.get_id()
+    print(user)
     return render_template('dashboard.html')
 
 
