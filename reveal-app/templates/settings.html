@@ -5,7 +5,7 @@
 	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-	<title>Light Bootstrap Dashboard by Creative Tim</title>
+	<title>Reveal - {{ fullname }}</title>
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
@@ -33,32 +33,32 @@
     	<div class="sidebar-wrapper">
             <div class="logo">
                 <a href="http://www.creative-tim.com" class="simple-text">
-                    JAMES MILES
+                    {{ fullname }}
                 </a>
             </div>
 
             <ul class="nav">
                 <li>
-                    <a href="dashboard.html">
+                    <a href="{{ url_for('dashboard') }}">
                         <i class="pe-7s-graph"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
-				
+
                 <li class="active">
-                    <a href="user.html">
+                    <a href="{{ url_for('profile') }}">
                         <i class="pe-7s-user"></i>
                         <p>User Profile</p>
                     </a>
                 </li>
-				
+
 				<li>
-                    <a href="user.html">
+                    <a href="{{ url_for('settings') }}">
                         <i class="pe-7s-config"></i>
                         <p>Settings</p>
                     </a>
                 </li>
-               
+
 			    <!--
 				<li class="active-pro">
                     <a href="upgrade.html">
@@ -66,7 +66,7 @@
                         <p>Upgrade to PRO</p>
                     </a>
                 </li>
-				--> 
+				-->
             </ul>
     	</div>
     </div>
@@ -83,7 +83,7 @@
                     </button>
                     <a class="navbar-brand" href="#">REVEAL</a>
                 </div>
-				
+
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
@@ -96,7 +96,7 @@
                                 <li><a href="#">This will be a notification</a></li>
                               </ul>
                         </li>
-						
+
 						<li>
                             <a href="#">
                                 Log Out
@@ -115,106 +115,45 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">Edit Profile</h4>
+                                <h4 class="title">Edit Settings</h4>
                             </div>
+
                             <div class="content">
                                 <form>
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>First Name</label>
-                                                <input type="text" class="form-control" placeholder="John" value="">
+                                                <label>Gender</label>
+                                                <input type="text" class="form-control" placeholder="Male/Female" value="{{ gender if gender != none }}">
                                             </div>
                                         </div>
-										
-										<div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Surname</label>
-                                                <input type="text" class="form-control" placeholder="Smith" value="">
-                                            </div>
-                                        </div>
-										
-										<div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Age</label>
-                                                <input type="text" class="form-control" placeholder="18" value="">
-                                            </div>
-                                        </div>
- 
-										
-                                    </div>
-									
-									<div class="row">
-										<div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="exampleInputEmail1">Your Instagram</label>
-                                                <input type="email" class="form-control" placeholder="You can leave this blank" value="">
-                                            </div>
-                                        </div>
-										
-										<div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="exampleInputEmail1">Your Twitter</label>
-                                                <input type="email" class="form-control" placeholder="You can leave this blank" value="">
-                                            </div>
-                                        </div>
-									</div>
 
-                                    <div class="row">
-                                        <div class="col-md-6">
+										<div class="col-md-6">
                                             <div class="form-group">
-                                                <label>City</label>
-                                                <input type="text" class="form-control" placeholder="San Fransisco" value="">
+                                                <label>Interested In</label>
+                                                <input type="text" class="form-control" placeholder="Male/Female/Both" value="{{ interested_in if interested_in != none}}">
                                             </div>
                                         </div>
+
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Country</label>
-                                                <input type="text" class="form-control" placeholder="United States" value="">
+                                                <label>Maximum Distance (in Miles)</label>
+                                                <input type="text" class="form-control" placeholder="30" value="{{ maximum_distance if maximum_distance != none }}">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Age Gap (in Years)</label>
+                                                <input type="text" class="form-control" placeholder="3" value="{{ maximum_distance if maximum_distance != none }}">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label>About Me</label>
-                                                <textarea rows="5" class="form-control" placeholder="This is what other users will see on your profile"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
 
                                     <button type="submit" class="btn btn-info btn-fill pull-right">Update Profile</button>
                                     <div class="clearfix"></div>
                                 </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card card-user">
-                            <div class="image">
-                                <img src="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400" alt="..."/>
-                            </div>
-                            <div class="content">
-                                <div class="author">
-                                     <a href="#">
-                                    <img class="avatar border-gray" src="../static/dashboard/img/faces/face-3.jpg" alt="..."/>
-
-                                      <h4 class="title">Mike Andrew<br />
-                                         <small>michael24</small>
-                                      </h4>
-                                    </a>
-                                </div>
-                                <p class="description text-center"> "Lamborghini Mercy <br>
-                                                    Your chick she so thirsty <br>
-                                                    I'm in that two seat Lambo"
-                                </p>
-                            </div>
-                            <hr>
-                            <div class="text-center">
-                                <button href="#" class="btn btn-simple"><i class="fa fa-instagram"></i></button>
-                                <button href="#" class="btn btn-simple"><i class="fa fa-twitter"></i></button>
-
                             </div>
                         </div>
                     </div>
