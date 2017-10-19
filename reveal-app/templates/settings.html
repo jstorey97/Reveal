@@ -45,14 +45,14 @@
                     </a>
                 </li>
 
-                <li class="active">
+                <li>
                     <a href="{{ url_for('profile') }}">
                         <i class="pe-7s-user"></i>
                         <p>User Profile</p>
                     </a>
                 </li>
 
-				<li>
+				<li class="active">
                     <a href="{{ url_for('settings') }}">
                         <i class="pe-7s-config"></i>
                         <p>Settings</p>
@@ -119,40 +119,38 @@
                             </div>
 
                             <div class="content">
-                                <form>
+                                <form method="post">
                                     <div class="row">
+                                        {% from "_formhelpers.html" import render_field %}
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Gender</label>
-                                                <input type="text" class="form-control" placeholder="Male/Female" value="{{ gender if gender != none }}">
+                                                {{ render_field(form.gender, class_="form-control", placeholder="Male/Female" )}}
                                             </div>
                                         </div>
 
 										<div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Interested In</label>
-                                                <input type="text" class="form-control" placeholder="Male/Female/Both" value="{{ interested_in if interested_in != none}}">
+                                                {{ render_field(form.interested_in, class_="form-control", placeholder="Male/Female/Both" )}}
                                             </div>
                                         </div>
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Maximum Distance (in Miles)</label>
-                                                <input type="text" class="form-control" placeholder="30" value="{{ maximum_distance if maximum_distance != none }}">
+                                                {{ render_field(form.max_distance, class_="form-control", placeholder="30" )}}
                                             </div>
                                         </div>
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Age Gap (in Years)</label>
-                                                <input type="text" class="form-control" placeholder="3" value="{{ maximum_distance if maximum_distance != none }}">
+                                                {{ render_field(form.age_gap, class_="form-control", placeholder="2" )}}
                                             </div>
                                         </div>
                                     </div>
 
 
-                                    <button type="submit" class="btn btn-info btn-fill pull-right">Update Profile</button>
+                                    <button type="submit" class="btn btn-info btn-fill">Update Profile</button>
                                     <div class="clearfix"></div>
+
                                 </form>
                             </div>
                         </div>

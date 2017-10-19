@@ -1,5 +1,5 @@
-from wtforms import Form, StringField, PasswordField, validators
-from wtforms.fields.html5 import EmailField
+from wtforms import Form, StringField, PasswordField, validators, SelectField
+from wtforms.fields.html5 import EmailField, IntegerField
 
 
 class RegisterForm(Form):
@@ -20,3 +20,21 @@ class ConfirmationForm(Form):
 class LoginForm(Form):
     email = EmailField('Email address', [validators.DataRequired(), validators.Email()])
     password = PasswordField('Password')
+
+
+class ProfileForm(Form):
+    first_name = StringField('First Name', [validators.Length(min=1, max=25)])
+    surname = StringField('Surname', [validators.Length(min=1, max=25)])
+    age = IntegerField('Age')
+    twitter = StringField('Twitter', [validators.Length(min=1, max=25)])
+    instagram = StringField('Instagram', [validators.Length(min=1, max=25)])
+    city = StringField('City', [validators.Length(min=1, max=40)])
+    country = StringField('Country', [validators.Length(min=1, max=25)])
+    about_me = StringField('About Me', [validators.Length(min=1, max=140)])
+
+
+class SettingsForm(Form):
+    gender = SelectField(u'Gender', choices=[('Male', 'Male'), ('Female', 'Female')])
+    interested_in = SelectField(u'Interested In', choices=[('Men', 'Men'), ('Women', 'Women'), ('Both', 'Both')])
+    max_distance = IntegerField('Maximum Distance (in miles)')
+    age_gap = IntegerField('Age Gap (in Years)')
