@@ -103,7 +103,9 @@ def register():
             db.session.add(user)
             db.session.commit()
 
-            user_settings = Setting()
+            user_settings = Setting(ageGap=2,
+                                    searchDistance=30,
+                                    settingsEdited=False)
             db.session.add(user_settings)
             db.session.commit()
 
@@ -184,8 +186,6 @@ def login():
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    user = load_user(current_user.get_id())
-
     user_settings = Setting.query.get(int(current_user.get_id()))
     user_profile = Profile.query.get(int(current_user.get_id()))
 
@@ -217,37 +217,34 @@ def profile():
 def settings():
     form = SettingsForm(request.form)
 
-    # Use SQL to grab persons data, update using
-    # settings_form.interested_in.default = "Women"
-    # settings_form.process()
+    user_settings = Setting.query.get(int(current_user.get_id()))
 
-    user_settings = Setting.query.filter_by(email=load_user(current_user.get_id()).email).first()
-
+    # User info
     gender = user_settings.gender
-    interested_in = user_settings.interested_in
+    interested_in = user_settings.showMe
     max_distance = user_settings.searchDistance
-    age_gap = user_settings.settingsEdited
+    age_gap = user_settings.ageGap
     settings_edited = user_settings.settingsEdited
 
     if request.method == 'POST' and form.validate():
-        gender = form.gender.data
-        interested_in = form.interested_in.data
-        max_distance = form.max_distance.data
-        age_gap = form.age_gap.data
+        user_settings.gender = form.gender.data
+        user_settings.showMe = form.interested_in.data
+        user_settings.searchDistance = form.max_distance.data
+        user_settings.ageGap = form.age_gap.data
+        user_settings.settingsEdited = True
 
-        user_settings.gender = gender
-        user_settings.showMe = interested_in
-        user_settings.searchDistance = max_distance
-        user_settings.ageGap = age_gap
+        db.session.commit()
 
         return redirect(url_for('settings'))
 
     if settings_edited:
+        form.gender.default = gender
+        form.interested_in.default = interested_in
+        form.age_gap.default = int(age_gap)
+        form.max_distance.default = int(max_distance)
+        form.process()
+
         return render_template('settings.html',
-                               gender=gender,
-                               interested_in=interested_in,
-                               max_distance=max_distance,
-                               age_gap=age_gap,
                                form=form)
     else:
         return render_template('settings.html',
