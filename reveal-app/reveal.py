@@ -56,7 +56,6 @@ class Profile(db.Model, UserMixin):
     firstName = db.Column(db.String(25))
     surname = db.Column(db.String(40))
 
-    gender = db.Column(db.String(10))
     age = db.Column(db.Integer)
 
     instagram = db.Column(db.String(40))
@@ -71,9 +70,10 @@ class Profile(db.Model, UserMixin):
 class Setting(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
 
+    gender = db.Column(db.String(10))
     showMe = db.Column(db.String(10))
     searchDistance = db.Column(db.Integer)
-
+    ageGap = db.Column(db.Integer)
     settingsEdited = db.Column(db.Boolean())
 
 
@@ -221,17 +221,37 @@ def settings():
     # settings_form.interested_in.default = "Women"
     # settings_form.process()
 
+    user_settings = Setting.query.filter_by(email=load_user(current_user.get_id()).email).first()
+
+    gender = user_settings.gender
+    interested_in = user_settings.interested_in
+    max_distance = user_settings.searchDistance
+    age_gap = user_settings.settingsEdited
+    settings_edited = user_settings.settingsEdited
+
     if request.method == 'POST' and form.validate():
         gender = form.gender.data
         interested_in = form.interested_in.data
         max_distance = form.max_distance.data
         age_gap = form.age_gap.data
 
-        user = 
+        user_settings.gender = gender
+        user_settings.showMe = interested_in
+        user_settings.searchDistance = max_distance
+        user_settings.ageGap = age_gap
 
+        return redirect(url_for('settings'))
 
-    return render_template('settings.html',
-                           form=form)
+    if settings_edited:
+        return render_template('settings.html',
+                               gender=gender,
+                               interested_in=interested_in,
+                               max_distance=max_distance,
+                               age_gap=age_gap,
+                               form=form)
+    else:
+        return render_template('settings.html',
+                               form=form)
 
 
 @app.route('/logout')

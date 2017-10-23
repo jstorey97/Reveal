@@ -124,25 +124,25 @@
                                         {% from "_formhelpers.html" import render_field %}
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                {{ render_field(form.gender, class_="form-control", placeholder="Male/Female" )}}
+                                                {{ render_field(form.gender, class_="form-control", placeholder="Male/Female", value="{{ gender if gender != none }}" )}}
                                             </div>
                                         </div>
 
 										<div class="col-md-6">
                                             <div class="form-group">
-                                                {{ render_field(form.interested_in, class_="form-control", placeholder="Male/Female/Both" )}}
+                                                {{ render_field(form.interested_in, class_="form-control", placeholder="Male/Female/Both", value="{{ interested_in if gender != interested_in }}" )}}
                                             </div>
                                         </div>
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                {{ render_field(form.max_distance, class_="form-control", placeholder="30" )}}
+                                                {{ render_field(form.max_distance, class_="form-control", placeholder="30",  value="{{ max_distance if max_distance != none }}" )}}
                                             </div>
                                         </div>
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                {{ render_field(form.age_gap, class_="form-control", placeholder="2" )}}
+                                                {{ render_field(form.age_gap, class_="form-control", placeholder="2",  value="{{ age_gap if age_gap != none }}" )}}
                                             </div>
                                         </div>
                                     </div>
