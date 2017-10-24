@@ -66,6 +66,8 @@ class Profile(db.Model, UserMixin):
 
     aboutMe = db.Column(db.String(140))
 
+    profileEdited = False
+
 
 class Setting(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -109,7 +111,9 @@ def register():
             db.session.add(user_settings)
             db.session.commit()
 
-            user_profile = Profile()
+            user_profile = Profile(fullname=form.name.data,
+                                   firstName=form.name.data.split()[0],
+                                   surname=' '.join(form.name.data.split()[1:]))
             db.session.add(user_profile)
             db.session.commit()
 
@@ -205,11 +209,48 @@ def dashboard():
 @app.route('/profile',  methods=['GET', 'POST'])
 @login_required
 def profile():
-    profile_form = ProfileForm(request.form)
-    user = User.query.filter_by(email=load_user(current_user.get_id()).email).first()
+    form = ProfileForm(request.form)
+    profile_settings = Profile.query.get(int(current_user.get_id()))
 
-    return render_template('profile.html',
-                           form=profile_form)
+    if request.method == 'POST' and form.validate():
+
+
+        profile_settings.firstName = form.firstName.data
+        profile_settings.surname = form.surname.data
+        profile_settings.age = form.age.data
+        profile_settings.twitter = form.twitter.data
+        profile_settings.instagram = form.instagram.data
+        profile_settings.city = form.city.data
+        profile_settings.country = form.country.data
+        profile_settings.aboutMe = form.aboutMe.data
+        profile_settings.profileEdited = True
+
+        db.session.commit()
+
+        return redirect(url_for('profile'))
+
+    if profile_settings.profileEdited:
+        form.firstName.default = profile_settings.firstName
+        form.surname.default = profile_settings.surname
+        form.age.default = profile_settings.age
+        form.twitter.default = profile_settings.twitter
+        form.instagram.default = profile_settings.instagram
+        form.city.default = profile_settings.city
+        form.country.default = profile_settings.country
+        form.aboutMe.default = profile_settings.aboutMe
+
+        form.process()
+
+        return render_template('profile.html',
+                               form=form)
+
+    else:
+        form.firstName.default = profile_settings.firstName
+        form.surname.default = profile_settings.surname
+        form.process()
+
+        return render_template('profile.html',
+                               form=form)
 
 
 @app.route('/settings',  methods=['GET', 'POST'])
@@ -218,13 +259,6 @@ def settings():
     form = SettingsForm(request.form)
 
     user_settings = Setting.query.get(int(current_user.get_id()))
-
-    # User info
-    gender = user_settings.gender
-    interested_in = user_settings.showMe
-    max_distance = user_settings.searchDistance
-    age_gap = user_settings.ageGap
-    settings_edited = user_settings.settingsEdited
 
     if request.method == 'POST' and form.validate():
         user_settings.gender = form.gender.data
@@ -237,11 +271,12 @@ def settings():
 
         return redirect(url_for('settings'))
 
-    if settings_edited:
-        form.gender.default = gender
-        form.interested_in.default = interested_in
-        form.age_gap.default = int(age_gap)
-        form.max_distance.default = int(max_distance)
+    # Bool to determine what data is loaded
+    if user_settings.settingsEdited:
+        form.gender.default = user_settings.gender
+        form.interested_in.default = user_settings.showMe
+        form.age_gap.default = int(user_settings.ageGap)
+        form.max_distance.default = int(user_settings.searchDistance)
         form.process()
 
         return render_template('settings.html',

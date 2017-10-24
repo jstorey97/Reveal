@@ -117,77 +117,73 @@
                             <div class="header">
                                 <h4 class="title">Edit Profile</h4>
                             </div>
-                            <div class="content">
-                                {% from "_formhelpers.html" import render_field %}
-                                <form>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>First Name</label>
-                                                <input type="text" class="form-control" placeholder="John" value="{{ first_name if first_name != none }}">
+                            {% from "_formhelpers.html" import render_field %}
+                            <form method="post">
+                                <div class="content">
+                                    {% from "_formhelpers.html" import render_field %}
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {{ render_field(form.firstName, class_="form-control", placeholder="John" )}}
+                                                </div>
                                             </div>
-                                        </div>
-										
-										<div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Surname</label>
-                                                <input type="text" class="form-control" placeholder="Smith" value="{{ surname if surname != none}}">
-                                            </div>
-                                        </div>
-										
-										<div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Age</label>
-                                                <input type="text" class="form-control" placeholder="18" value="{{ age if age != none}}">
-                                            </div>
-                                        </div>
- 
-										
-                                    </div>
-									
-									<div class="row">
-										<div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Your Instagram</label>
-                                                <input type="email" class="form-control" placeholder="You can leave this blank" value="{{ instagram if instagram != none }}">
-                                            </div>
-                                        </div>
-										
-										<div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Your Twitter</label>
-                                                <input type="email" class="form-control" placeholder="You can leave this blank" value="{{ twitter if twitter != none }}">
-                                            </div>
-                                        </div>
-									</div>
 
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>City</label>
-                                                <input type="text" class="form-control" placeholder="San Fransisco" value="{{ city if city != none }}">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {{ render_field(form.surname, class_="form-control", placeholder="Smith" )}}
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {{ render_field(form.age, class_="form-control", placeholder="18" )}}
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{ render_field(form.instagram, class_="form-control", placeholder="JohnSmith13" )}}
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{ render_field(form.twitter, class_="form-control", placeholder="JohnSmith13" )}}
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group"
 
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{ render_field(form.city, class_="form-control", placeholder="London" )}}
+                                                </div>
                                             </div>
-                                        </div>{{ render_field(form.name, class_="form-control") }}
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label>About Me</label>
-                                                <textarea rows="5" class="form-control" placeholder="Whatever here" value="{{ about_me if about_me }}"></textarea>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{ render_field(form.instagram, class_="form-control", placeholder="England" )}}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <button type="submit" class="btn btn-info btn-fill pull-right">Update Profile</button>
-                                    <div class="clearfix"></div>
-                                </form>
-                            </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    {{ render_field(form.aboutMe, class_="form-control", placeholder="Hello all I am..." )}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-info btn-fill pull-right">Update Profile</button>
+                                        <div class="clearfix"></div>
+                                    </form>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <div class="col-md-4">

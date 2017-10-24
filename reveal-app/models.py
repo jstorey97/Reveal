@@ -23,14 +23,14 @@ class LoginForm(Form):
 
 
 class ProfileForm(Form):
-    first_name = StringField('First Name', [validators.Length(min=1, max=25)])
+    firstName = StringField('First Name', [validators.Length(min=1, max=25)])
     surname = StringField('Surname', [validators.Length(min=1, max=25)])
     age = IntegerField('Age')
     twitter = StringField('Twitter', [validators.Length(min=1, max=25)])
     instagram = StringField('Instagram', [validators.Length(min=1, max=25)])
     city = StringField('City', [validators.Length(min=1, max=40)])
     country = StringField('Country', [validators.Length(min=1, max=25)])
-    about_me = StringField('About Me', [validators.Length(min=1, max=140)])
+    aboutMe = StringField('About Me', [validators.Length(min=1, max=140)])
 
 
 class SettingsForm(Form):
