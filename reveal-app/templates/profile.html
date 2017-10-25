@@ -194,7 +194,7 @@
                                     <img class="avatar border-gray" src="../static/dashboard/img/faces/face-3.jpg" alt="..."/>
 
                                       <h4 class="title">{{ fullname if fullname != none else "Your Name"}}<br />
-                                         <small>{{ city if city != none else "Your city" }}</small>
+                                         <small>{{ city if city != none else "Your city" }} - {{ age if age != none else "Your age"}}</small>
                                       </h4>
                                     </a>
                                 </div>
@@ -221,18 +221,9 @@
 
 
 </body>
-
-    <!--   Core JS Files   -->
     <script src="../static/dashboard/js/jquery-1.10.2.js" type="text/javascript"></script>
 	<script src="../static/dashboard/js/bootstrap.min.js" type="text/javascript"></script>
-
-    <!--  Google Maps Plugin    -->
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-
-    <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
 	<script src="../static/dashboard/js/light-bootstrap-dashboard.js"></script>
-
-	<!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
-	<script src="../static/dashboard/js/demo.js"></script>
 
 </html>

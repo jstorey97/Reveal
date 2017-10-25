@@ -1,4 +1,7 @@
 import os
+import urllib.request
+import json
+import geopy.distance
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -176,6 +179,8 @@ def login():
                 user.currentLoginAt = datetime.now()
                 user.currentLoginIP = request.remote_addr
 
+                db.session.commit()
+
                 # We'll find the current location here later, maybe in dashboard
 
                 login_user(user, remember=True)
@@ -195,14 +200,20 @@ def dashboard():
     user_profile = Profile.query.get(int(current_user.get_id()))
 
     if user_settings.settingsEdited:
+        users = get_all_users(int(current_user.get_id()))
+
         return render_template('dashboard.html',
                                fullname=user_profile.fullname,
                                edited=True,
+                               users=users
                                )
 
     else:
+        # Call this to get users (inaccurate data) City, Country, Lat, Lon
+        get_city_lat_long(request.remote_addr)
+
         return render_template('dashboard.html',
-                               fullname="John Smith",
+                               fullname=user_profile.fullname,
                                edited=False
                                )
 
@@ -214,6 +225,7 @@ def profile():
     profile_settings = Profile.query.get(int(current_user.get_id()))
 
     if request.method == 'POST' and form.validate():
+        profile_settings.fullname = f'{form.firstName.data} {form.surname.data}'
         profile_settings.firstName = form.firstName.data
         profile_settings.surname = form.surname.data
         profile_settings.age = form.age.data
@@ -244,19 +256,23 @@ def profile():
                                form=form,
                                fullname=profile_settings.fullname,
                                city=profile_settings.city,
-                               aboutMe=profile_settings.aboutMe
+                               aboutMe=profile_settings.aboutMe,
+                               age=profile_settings.age
                                )
 
     else:
         form.firstName.default = profile_settings.firstName
         form.surname.default = profile_settings.surname
+        form.city.default = profile_settings.city
+        form.country.default = profile_settings.country
         form.process()
 
         return render_template('profile.html',
                                form=form,
                                fullname=profile_settings.fullname,
                                city=profile_settings.city,
-                               aboutMe=profile_settings.aboutMe
+                               aboutMe=profile_settings.aboutMe,
+                               age=profile_settings.age
                                )
 
 
@@ -297,12 +313,62 @@ def settings():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for(index))
+    return redirect(url_for('index'))
 
 
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
+
+
+def get_city_lat_long(user_ip):
+    """Get the users city, country,
+       lat and long from ip-api.com"""
+
+    req = urllib.request.urlopen(f'http://ip-api.com/json/{user_ip}')
+    encoding = req.info().get_content_charset('utf8')
+    data = json.loads(req.read().decode(encoding))
+
+    user_profile = Profile.query.get(int(current_user.get_id()))
+    user_profile.city = data["city"]
+    user_profile.country = data["country"]
+    db.session.commit()
+
+    user = User.query.get(int(current_user.get_id()))
+    user.lat = data["lat"]
+    user.long = data["lon"]
+    db.session.commit()
+
+
+def get_all_users(current_id):
+    """Gets all the users in the range of the current users maxDistance"""
+    current = User.query.get(current_id)
+    users = User.query.all()
+
+    # The current users maximum search distance
+    max_distance = Setting.query.get(current_id).searchDistance
+
+    users_in_distance = []
+
+    for user in users:
+        if user == current:
+            continue
+
+        # User_profile is needed for fullname, age, bio. Settings is needed for Gender, interested in.
+
+        user_profile = Profile.query.get(user.id)
+        user_setings = Profile.query.get(user.id)
+
+        coords_1 = (current.lat, current.long)
+        coords_2 = (user.lat, user.long)
+
+        distance = geopy.distance.vincenty(coords_1, coords_2).km
+
+        # Need to make a check to ensure user.profileEdited/settingsEdited are True
+        if distance <= max_distance:
+            users_in_distance.append(user_profile)
+
+    return users_in_distance
 
 
 if __name__ == "__main__":
