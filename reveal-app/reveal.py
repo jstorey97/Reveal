@@ -27,7 +27,7 @@ s = URLSafeTimedSerializer('ThisIsASecret')
 
 db = SQLAlchemy(app)
 
-# tais.ren@fxe.us
+# anabia.elleni@fxe.us
 
 
 class User(db.Model, UserMixin):
@@ -66,7 +66,7 @@ class Profile(db.Model, UserMixin):
 
     aboutMe = db.Column(db.String(140))
 
-    profileEdited = False
+    profileEdited = db.Column(db.Boolean())
 
 
 class Setting(db.Model, UserMixin):
@@ -113,7 +113,8 @@ def register():
 
             user_profile = Profile(fullname=form.name.data,
                                    firstName=form.name.data.split()[0],
-                                   surname=' '.join(form.name.data.split()[1:]))
+                                   surname=' '.join(form.name.data.split()[1:]),
+                                   profileEdited=False)
             db.session.add(user_profile)
             db.session.commit()
 
@@ -213,8 +214,6 @@ def profile():
     profile_settings = Profile.query.get(int(current_user.get_id()))
 
     if request.method == 'POST' and form.validate():
-
-
         profile_settings.firstName = form.firstName.data
         profile_settings.surname = form.surname.data
         profile_settings.age = form.age.data
@@ -242,7 +241,11 @@ def profile():
         form.process()
 
         return render_template('profile.html',
-                               form=form)
+                               form=form,
+                               fullname=profile_settings.fullname,
+                               city=profile_settings.city,
+                               aboutMe=profile_settings.aboutMe
+                               )
 
     else:
         form.firstName.default = profile_settings.firstName
@@ -250,7 +253,11 @@ def profile():
         form.process()
 
         return render_template('profile.html',
-                               form=form)
+                               form=form,
+                               fullname=profile_settings.fullname,
+                               city=profile_settings.city,
+                               aboutMe=profile_settings.aboutMe
+                               )
 
 
 @app.route('/settings',  methods=['GET', 'POST'])

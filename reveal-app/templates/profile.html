@@ -117,11 +117,9 @@
                             <div class="header">
                                 <h4 class="title">Edit Profile</h4>
                             </div>
-                            {% from "_formhelpers.html" import render_field %}
-                            <form method="post">
                                 <div class="content">
-                                    {% from "_formhelpers.html" import render_field %}
-                                    <form>
+                                    <form method="post">
+                                        {% from "_formhelpers.html" import render_field %}
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
@@ -166,7 +164,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    {{ render_field(form.instagram, class_="form-control", placeholder="England" )}}
+                                                    {{ render_field(form.country, class_="form-control", placeholder="England" )}}
                                                 </div>
                                             </div>
                                         </div>
@@ -183,7 +181,6 @@
                                         <div class="clearfix"></div>
                                     </form>
                                 </div>
-                            </form>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -197,13 +194,12 @@
                                     <img class="avatar border-gray" src="../static/dashboard/img/faces/face-3.jpg" alt="..."/>
 
                                       <h4 class="title">{{ fullname if fullname != none else "Your Name"}}<br />
-                                         <small>michael24</small>
+                                         <small>{{ city if city != none else "Your city" }}</small>
                                       </h4>
                                     </a>
                                 </div>
-                                <p class="description text-center"> "Lamborghini Mercy <br>
-                                                    Your chick she so thirsty <br>
-                                                    I'm in that two seat Lambo"
+                                <p class="description text-center">
+                                    {{ aboutMe if aboutMe != none else "Your biography will go here!" }}
                                 </p>
                             </div>
                             <hr>
@@ -215,52 +211,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="header">
-                                <h4 class="title">Edit Profile</h4>
-                            </div>
 
-                            <!-- SETTINGS -->
-                            <div class="content">
-                                <form>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Gender</label>
-                                                <input type="text" class="form-control" placeholder="Male/Female" value="{{ gender if gender != none }}">
-                                            </div>
-                                        </div>
-
-										<div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Interested In</label>
-                                                <input type="text" class="form-control" placeholder="Male/Female/Both" value="{{ interested_in if interested_in != none}}">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Maximum Distance (in Miles)</label>
-                                                <input type="text" class="form-control" placeholder="30" value="{{ maximum_distance if maximum_distance != none }}">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Age Gap (in Years)</label>
-                                                <input type="text" class="form-control" placeholder="3" value="{{ maximum_distance if maximum_distance != none }}">
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <button type="submit" class="btn btn-info btn-fill pull-right">Update Profile</button>
-                                    <div class="clearfix"></div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
             </div>

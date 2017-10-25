@@ -38,3 +38,13 @@ class SettingsForm(Form):
     interested_in = SelectField(u'Interested In', choices=[('Men', 'Men'), ('Women', 'Women'), ('Both', 'Both')])
     max_distance = IntegerField('Maximum Distance (in miles)')
     age_gap = IntegerField('Age Gap (in Years)')
+
+
+class ChangePasswordForm(Form):
+    current_password = PasswordField('Current Password')
+    new_password = PasswordField('Password', [
+        validators.DataRequired(),
+        validators.Length(min=8, max=25),
+        validators.EqualTo('new_password_confirm', message='Passwords do not match')
+    ])
+    new_password_confirm = PasswordField('Confirm Password')
