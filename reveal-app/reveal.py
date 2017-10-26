@@ -9,16 +9,22 @@ from flask_login import LoginManager, login_user, UserMixin, login_required, log
 from flask import render_template, request, redirect, url_for, flash
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+from datetime import datetime
+from passlib.hash import sha256_crypt
+from werkzeug.utils import secure_filename
 
 from models import RegisterForm, LoginForm, ProfileForm, SettingsForm
 
-from datetime import datetime
-from passlib.hash import sha256_crypt
+
+UPLOAD_FOLDER = '/user_photos'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
 
 app = Flask(__name__)
 app.config.from_pyfile("email_conf.py")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.abspath(os.getcwd())+"\database.db"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = 'BULKpowders2017'
 
 login_manager = LoginManager()
@@ -354,21 +360,24 @@ def get_all_users(current_id):
         if user == current:
             continue
 
-        # User_profile is needed for fullname, age, bio. Settings is needed for Gender, interested in.
+        user_profile = Profile.query.get(user)
+        print(user_profile.city)
+        user_settings = Setting.query.get(user)
 
-        user_profile = Profile.query.get(user.id)
-        user_setings = Profile.query.get(user.id)
+        print(user_settings.searchDistance)
 
-        coords_1 = (current.lat, current.long)
-        coords_2 = (user.lat, user.long)
+        # Checking if the users settingsEdited and profileEdited and True
+        if user_profile.profileEdited:
+            coords_1 = (current.lat, current.long)
+            coords_2 = (user.lat, user.long)
 
-        distance = geopy.distance.vincenty(coords_1, coords_2).km
+            distance = geopy.distance.vincenty(coords_1, coords_2).km
 
-        # Need to make a check to ensure user.profileEdited/settingsEdited are True
-        if distance <= max_distance:
-            users_in_distance.append(user_profile)
+            # Need to make a check to ensure user.profileEdited/settingsEdited are True
+            if distance <= max_distance:
+                users_in_distance.append(user)
 
-    return users_in_distance
+        return users_in_distance
 
 
 if __name__ == "__main__":

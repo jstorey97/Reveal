@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, PasswordField, validators, SelectField
+from wtforms import Form, StringField, PasswordField, validators, SelectField, FileField
 from wtforms.fields.html5 import EmailField, IntegerField
 
 
@@ -31,6 +31,9 @@ class ProfileForm(Form):
     city = StringField('City', [validators.Length(min=1, max=40)])
     country = StringField('Country', [validators.Length(min=1, max=25)])
     aboutMe = StringField('About Me', [validators.Length(min=1, max=140)])
+
+#class PhotoForm(Form):
+#    photo = FileField(validators=[FileRequired()])
 
 
 class SettingsForm(Form):
