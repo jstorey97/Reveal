@@ -216,7 +216,8 @@ def dashboard():
 
     else:
         # Call this to get users (inaccurate data) City, Country, Lat, Lon
-        get_city_lat_long(request.remote_addr)
+        # get_city_lat_long(request.remote_addr)
+        get_city_lat_long('217.115.124.11')  # Using this IP for now
 
         return render_template('dashboard.html',
                                fullname=user_profile.fullname,
@@ -360,14 +361,11 @@ def get_all_users(current_id):
         if user == current:
             continue
 
-        user_profile = Profile.query.get(user)
-        print(user_profile.city)
-        user_settings = Setting.query.get(user)
-
-        print(user_settings.searchDistance)
+        user_profile = Profile.query.get(user.id)
+        user_settings = Setting.query.get(user.id)
 
         # Checking if the users settingsEdited and profileEdited and True
-        if user_profile.profileEdited:
+        if user_profile.profileEdited and user_settings.settingsEdited:
             coords_1 = (current.lat, current.long)
             coords_2 = (user.lat, user.long)
 
@@ -375,9 +373,9 @@ def get_all_users(current_id):
 
             # Need to make a check to ensure user.profileEdited/settingsEdited are True
             if distance <= max_distance:
-                users_in_distance.append(user)
+                users_in_distance.append(user_profile)
 
-        return users_in_distance
+    return users_in_distance
 
 
 if __name__ == "__main__":
