@@ -344,36 +344,48 @@ def get_city_lat_long(user_ip):
     user = User.query.get(int(current_user.get_id()))
     user.lat = data["lat"]
     user.long = data["lon"]
+    user.currentLocation = f'{data["city"]}, {data["country"]}'
     db.session.commit()
 
 
 def get_all_users(current_id):
     """Gets all the users in the range of the current users maxDistance"""
-    current = User.query.get(current_id)
+    current_user = User.query.get(current_id)
+    current_user_settings = Setting.query.get(current_id)
+    current_user_profile = Profile.query.get(current_id)
+
     users = User.query.all()
 
     # The current users maximum search distance
-    max_distance = Setting.query.get(current_id).searchDistance
+    max_distance = current_user_settings.searchDistance
+
+    # What gender and age our current user is interested in seeing
+    interested_in = current_user_settings.showMe
+    # Converting the "Interested in" into gender
+    if interested_in == "Women":
+        interested_in = "Female"
+    elif interested_in == "Male":
+        interested_in = "Men"
 
     users_in_distance = []
 
     for user in users:
-        if user == current:
-            continue
+        if user != current_user:
+            user_profile = Profile.query.get(user.id)
+            user_settings = Setting.query.get(user.id)
 
-        user_profile = Profile.query.get(user.id)
-        user_settings = Setting.query.get(user.id)
+            # Checking if the user's settingsEdited and profileEdited and True
+            if user_profile.profileEdited and user_settings.settingsEdited:
+                # Ensuring the gender the user wants is shown
+                # Only works for Female/Male Male/Female atm will add both later
+                if user_settings.gender == interested_in:
+                    coords_1 = (current_user.lat, current_user.long)
+                    coords_2 = (user.lat, user.long)
 
-        # Checking if the users settingsEdited and profileEdited and True
-        if user_profile.profileEdited and user_settings.settingsEdited:
-            coords_1 = (current.lat, current.long)
-            coords_2 = (user.lat, user.long)
+                    distance = geopy.distance.vincenty(coords_1, coords_2).km
 
-            distance = geopy.distance.vincenty(coords_1, coords_2).km
-
-            # Need to make a check to ensure user.profileEdited/settingsEdited are True
-            if distance <= max_distance:
-                users_in_distance.append(user_profile)
+                    if distance <= max_distance:
+                        users_in_distance.append(user_profile)
 
     return users_in_distance
 
