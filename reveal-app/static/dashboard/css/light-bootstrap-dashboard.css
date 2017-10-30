@@ -1064,11 +1064,11 @@ body > .navbar-collapse[data-color="purple"]:after {
 .table > tbody > tr > td,
 .table > tfoot > tr > td {
   padding: 12px 8px;
-  vertical-align: middle;
+  text-align: left;
 }
 .table > thead > tr > th {
   border-bottom-width: 1px;
-  font-size: 12px;
+  font-size: 14px;
   text-transform: uppercase;
   color: #9A9A9A;
   font-weight: 400;
@@ -3447,4 +3447,33 @@ body > .navbar-collapse[data-color="purple"]:after {
 .ignore-btn:hover {
   background: #eb323b;
   text-decoration: none;
+}
+
+.chat-photos li{
+    text-decoration: none;
+    display: inline;
+    list-style-type: none;
+}
+
+.message-container{
+    padding-top: 10px;
+    padding-bottom: 50px;
+}
+
+
+.their-message{
+    color: #fff;
+    background-color: #9b59b6;
+    margin: 5px 200px 5px 200px;
+    padding-top: 10px;
+    padding-bottom: 3px;
+}
+
+
+.user-message {
+    color: #fff;
+    background-color: #95a5a6;
+    margin: 5px 200px 5px 200px;
+    padding-top: 10px;
+    padding-bottom: 3px;
 }

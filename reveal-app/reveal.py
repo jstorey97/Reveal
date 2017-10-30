@@ -8,23 +8,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, UserMixin, login_required, logout_user, current_user
 from flask import render_template, request, redirect, url_for, flash
 from flask_mail import Mail, Message
+from flask_socketio import SocketIO
+
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from datetime import datetime
 from passlib.hash import sha256_crypt
-from werkzeug.utils import secure_filename
 
 from models import RegisterForm, LoginForm, ProfileForm, SettingsForm
-
-
-UPLOAD_FOLDER = '/user_photos'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
 app = Flask(__name__)
 app.config.from_pyfile("email_conf.py")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.abspath(os.getcwd())+"\database.db"
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = 'BULKpowders2017'
 
 login_manager = LoginManager()
@@ -34,6 +30,7 @@ login_manager.login_view = 'login'
 mail = Mail(app)
 s = URLSafeTimedSerializer('ThisIsASecret')
 
+socket = SocketIO(app)
 db = SQLAlchemy(app)
 
 # anabia.elleni@fxe.us
@@ -290,6 +287,12 @@ def profile():
 @login_required
 def messages():
     return render_template('messages.html')
+
+
+@app.route('/chatbox', methods=['GET', 'POST'])
+@login_required
+def single_message():
+    return render_template('chatbox.html')
 
 
 @app.route('/settings',  methods=['GET', 'POST'])
