@@ -95,6 +95,9 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+
     return render_template('index.html')
 
 
@@ -283,12 +286,19 @@ def profile():
                                )
 
 
+@app.route('/messages', methods=['GET', 'POST'])
+@login_required
+def messages():
+    return render_template('messages.html')
+
+
 @app.route('/settings',  methods=['GET', 'POST'])
 @login_required
 def settings():
     form = SettingsForm(request.form)
 
     user_settings = Setting.query.get(int(current_user.get_id()))
+    fullname = Profile.query.get(int(current_user.get_id())).fullname
 
     if request.method == 'POST' and form.validate():
         user_settings.gender = form.gender.data
@@ -310,6 +320,7 @@ def settings():
         form.process()
 
         return render_template('settings.html',
+                               fullname=fullname,
                                form=form)
     else:
         return render_template('settings.html',
