@@ -89,19 +89,20 @@ class Pair(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
 
     pair_id = db.Column(db.String(100))
-    user_id_2 = db.Column(db.String(40))
-    user_id_2 = db.Column(db.String(40))
+    userID = db.Column(db.String(40))
+    userID2 = db.Column(db.String(40))
     latest_message = db.Column(db.String(140))
     seen = db.Column(db.Boolean())
 
 
-class Messages(db.Model, UserMixin):
+class Message(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
 
-    pair_id = db.Column(db.String(100))
+    pairID = db.Column(db.String(100))
     sender = pair_id = db.Column(db.String(40))
     message = pair_id = db.Column(db.String(140))
     date = db.Column(db.DateTime())
+    seen = db.Column(db.Boolean())
 
 
 @login_manager.user_loader
