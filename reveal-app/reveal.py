@@ -14,7 +14,7 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from datetime import datetime
 from passlib.hash import sha256_crypt
 
-from models import RegisterForm, LoginForm, ProfileForm, SettingsForm
+from models import RegisterForm, LoginForm, ProfileForm, SettingsForm, ChatBoxForm
 
 
 app = Flask(__name__)
@@ -86,6 +86,8 @@ class Setting(db.Model, UserMixin):
 
 
 class Pair(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+
     pair_id = db.Column(db.String(100))
     user_id_2 = db.Column(db.String(40))
     user_id_2 = db.Column(db.String(40))
@@ -94,6 +96,8 @@ class Pair(db.Model, UserMixin):
 
 
 class Messages(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+
     pair_id = db.Column(db.String(100))
     sender = pair_id = db.Column(db.String(40))
     message = pair_id = db.Column(db.String(140))
@@ -307,7 +311,10 @@ def messages():
 @app.route('/chatbox', methods=['GET', 'POST'])
 @login_required
 def single_message():
-    return render_template('chatbox.html')
+    form = ChatBoxForm(request.form)
+
+    return render_template('chatbox.html',
+                           form=form)
 
 
 @app.route('/settings',  methods=['GET', 'POST'])

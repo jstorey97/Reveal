@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, PasswordField, validators, SelectField, FileField
+from wtforms import Form, StringField, PasswordField, validators, SelectField, TextAreaField
 from wtforms.fields.html5 import EmailField, IntegerField
 
 
@@ -32,9 +32,6 @@ class ProfileForm(Form):
     country = StringField('Country', [validators.Length(min=1, max=25)])
     aboutMe = StringField('About Me', [validators.Length(min=1, max=140)])
 
-#class PhotoForm(Form):
-#    photo = FileField(validators=[FileRequired()])
-
 
 class SettingsForm(Form):
     gender = SelectField(u'Gender', choices=[('Male', 'Male'), ('Female', 'Female')])
@@ -51,3 +48,7 @@ class ChangePasswordForm(Form):
         validators.EqualTo('new_password_confirm', message='Passwords do not match')
     ])
     new_password_confirm = PasswordField('Confirm Password')
+
+
+class ChatBoxForm(Form):
+    message = StringField('Your message: ', [validators.Length(min=1, max=140)])
