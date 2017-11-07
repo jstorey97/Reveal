@@ -9,7 +9,6 @@ from flask_login import LoginManager, login_user, UserMixin, login_required, log
 from flask import render_template, request, redirect, url_for, flash
 from flask_mail import Mail, Message
 from flask_socketio import SocketIO
-
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from datetime import datetime
 from passlib.hash import sha256_crypt
@@ -39,6 +38,7 @@ db = SQLAlchemy(app)
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
 
+    username = db.Column(db.String(20), unique=True)
     email = db.Column(db.String(40), unique=True)
     password = db.Column(db.String(25))
 
@@ -88,7 +88,7 @@ class Setting(db.Model, UserMixin):
 class Pair(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
 
-    pair_id = db.Column(db.String(100))
+    pairID = db.Column(db.String(100))
     userID = db.Column(db.String(40))
     userID2 = db.Column(db.String(40))
     latest_message = db.Column(db.String(140))
@@ -99,8 +99,9 @@ class Message(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
 
     pairID = db.Column(db.String(100))
-    sender = pair_id = db.Column(db.String(40))
-    message = pair_id = db.Column(db.String(140))
+    sender = db.Column(db.String(40))
+    receiver = db.Column(db.String(40))
+    message = db.Column(db.String(140))
     date = db.Column(db.DateTime())
     seen = db.Column(db.Boolean())
 
@@ -284,7 +285,9 @@ def profile():
                                fullname=profile_settings.fullname,
                                city=profile_settings.city,
                                aboutMe=profile_settings.aboutMe,
-                               age=profile_settings.age
+                               age=profile_settings.age,
+                               instagram=f'https://www.instagram.com/{profile_settings.instagram}',
+                               twitter=f'https://www.twitter.com/{profile_settings.twitter}'
                                )
 
     else:
@@ -299,7 +302,7 @@ def profile():
                                fullname=profile_settings.fullname,
                                city=profile_settings.city,
                                aboutMe=profile_settings.aboutMe,
-                               age=profile_settings.age
+                               age=profile_settings.age,
                                )
 
 
@@ -307,6 +310,11 @@ def profile():
 @login_required
 def messages():
     return render_template('messages.html')
+
+
+@app.route('/chatbox<token>', methods=['GET', 'POST'])
+def chatbox(token):
+    return render_template('chatbox.html')
 
 
 @app.route('/chatbox', methods=['GET', 'POST'])
