@@ -3,6 +3,7 @@ from wtforms.fields.html5 import EmailField, IntegerField
 
 
 class RegisterForm(Form):
+    username = StringField('Username', [validators.Length(min=1, max=20)])
     name = StringField('Full Name', [validators.Length(min=1, max=60)])
     email = EmailField('Email address', [validators.DataRequired(), validators.Email()])
     password = PasswordField('Password', [

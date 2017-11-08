@@ -67,6 +67,10 @@
             </div>
 
             <div class="form-row">
+                {{ render_field(form.name, class_="form-control") }}
+            </div>
+
+            <div class="form-row">
                 {{ render_field(form.email, class_="form-control") }}
 
                 {% with messages = get_flashed_messages() %}

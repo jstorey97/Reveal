@@ -8,7 +8,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, UserMixin, login_required, logout_user, current_user
 from flask import render_template, request, redirect, url_for, flash
 from flask_mail import Mail, Message
-from flask_socketio import SocketIO
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from datetime import datetime
 from passlib.hash import sha256_crypt
@@ -29,26 +28,19 @@ login_manager.login_view = 'login'
 mail = Mail(app)
 s = URLSafeTimedSerializer('ThisIsASecret')
 
-socket = SocketIO(app)
 db = SQLAlchemy(app)
-
-# anabia.elleni@fxe.us
 
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
 
-    username = db.Column(db.String(20), unique=True)
+    username = db.Column(db.String(25))
     email = db.Column(db.String(40), unique=True)
     password = db.Column(db.String(25))
-
     registeredAt = db.Column(db.DateTime())
-
     confirmed = db.Column(db.Boolean())
     confirmedAt = db.Column(db.DateTime())
-
     currentLoginAt = db.Column(db.DateTime())
-
     currentLoginIP = db.Column(db.String(100))
     currentLocation = db.Column(db.String(70))
     lat = db.Column(db.Float(15))
@@ -61,17 +53,13 @@ class Profile(db.Model, UserMixin):
     fullname = db.Column(db.String(65))
     firstName = db.Column(db.String(25))
     surname = db.Column(db.String(40))
-
+    username = db.Column(db.String(25))
     age = db.Column(db.Integer)
-
     instagram = db.Column(db.String(40))
     twitter = db.Column(db.String(40))
-
     city = db.Column(db.String(30))
     country = db.Column(db.String(40))
-
     aboutMe = db.Column(db.String(140))
-
     profileEdited = db.Column(db.Boolean())
 
 
@@ -95,7 +83,7 @@ class Pair(db.Model, UserMixin):
     seen = db.Column(db.Boolean())
 
 
-class Message(db.Model, UserMixin):
+class MessageTable(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
 
     pairID = db.Column(db.String(100))
@@ -128,7 +116,8 @@ def register():
         user = User.query.filter_by(email=form.email.data).first()
 
         if user is None:
-            user = User(email=form.email.data,
+            user = User(username=form.username.data,
+                        email=form.email.data,
                         password=sha256_crypt.encrypt(str(form.password.data)),
                         registeredAt=datetime.now(),
                         confirmed=False)
@@ -144,13 +133,14 @@ def register():
             user_profile = Profile(fullname=form.name.data,
                                    firstName=form.name.data.split()[0],
                                    surname=' '.join(form.name.data.split()[1:]),
+                                   username=form.username.data,
                                    profileEdited=False)
             db.session.add(user_profile)
             db.session.commit()
 
             token = s.dumps(form.email.data)
 
-            msg = Message('Confirm email', sender='Trump4cast@gmail.com', recipients=[form.email.data])
+            msg = Message('Confirm your Email! :)', recipients=[form.email.data])
             link = url_for('confirmed', token=token, _external=True)
             msg.body = f"Your confirmation link is: {link}"
             mail.send(msg)
@@ -158,7 +148,7 @@ def register():
             return redirect(url_for('confirm_email'))
 
         else:
-            flash("Email address is already being used!")
+            flash("Email or Username already being used!")
 
     return render_template('register.html',
                            form=form)
